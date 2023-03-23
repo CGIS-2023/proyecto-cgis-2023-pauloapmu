@@ -41,4 +41,31 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function nutricionista()
+    {
+        return $this->hasOne(Nutricionista::class);
+    }
+
+    public function paciente()
+    {
+        return $this->hasOne(Paciente::class);
+    }
+
+    public function getTipoUsuarioIdAttribute(){
+        if ($this->nutricionista()->exists()){
+            return 1;
+        }
+        elseif($this->paciente()->exists()){
+            return 2;
+        }
+        else{
+            return 3;
+        }
+    }
+
+    public function getTipoUsuarioAttribute(){
+        $tipos_usuario = [1 => trans('Nutricionista'), 2 => trans('Paciente'), 3 => trans('Administrador')];
+        return $tipos_usuario[$this->tipo_usuario_id];
+    }
 }
